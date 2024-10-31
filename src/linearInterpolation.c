@@ -40,6 +40,7 @@ float getY(linearInterpolation_t *pTable, float x){//一维查表，由(x)坐标
       return pTable->pyValues[i]+(pTable->pyValues[i+1]-pTable->pyValues[i])*(x-pTable->pxValues[i])/(pTable->pxValues[i+1]-pTable->pxValues[i]);
     }
   }
+	return 0;
 }
 
 float getZ(linearInterpolation_t *pTable, float x, float y){//二维查表，由(x,y)坐标，查z值
