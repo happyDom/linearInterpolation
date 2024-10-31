@@ -3,6 +3,9 @@
 void tableInitXY(linearInterpolation_t *pTable, uint8_t sizeOfX){//表格初始化为一维表，由x查y值
   if(NULL == pTable){return;}
   if(sizeOfX < 1){sizeOfX=1;}
+  
+  pTable->sizeOfX = sizeOfX;
+  pTable->sizeOfY = sizeOfX;
 
   pTable->pxValues = (float *)malloc(sizeof(float) * pTable->sizeOfX);
   pTable->pyValues = (float *)malloc(sizeof(float) * pTable->sizeOfX);
@@ -13,6 +16,9 @@ void tableInitXYZ(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOf
   if(sizeOfX < 1){sizeOfX=1;}
   if(sizeOfY < 1){sizeOfY=1;}
   if(sizeOfY < sizeOfX){sizeOfY = sizeOfX;}
+
+  pTable->sizeOfX = sizeOfX;
+  pTable->sizeOfY = sizeOfY;
 
   pTable->pxValues = (float *)malloc(sizeof(float) * pTable->sizeOfX);
   pTable->pyValues = (float *)malloc(sizeof(float) * pTable->sizeOfY);
