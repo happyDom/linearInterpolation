@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include "linearInterpolation.h"
+
 
 int main(int argc, char const *argv[])
 {
