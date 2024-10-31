@@ -1,0 +1,16 @@
+{
+	"productId": "3367b9c1-7166-52e5-efd8-cf418cbbd3cb",
+	"majorBranchName": "master",
+	"tagPrefix_major": "m",
+	"minorBranchName": "release",
+	"tagPrefix_minor": "r",
+	"anchorChar": "⚓",
+	"mySql": {
+		"host": "127.0.0.1",
+		"user": "test",
+		"pwd": "xxx",
+		"db": "demo",
+		"charset": "utf8",
+		"table": "gitVersion"
+	}
+}
