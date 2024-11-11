@@ -11,6 +11,17 @@ void tableInitXY(linearInterpolation_t *pTable, uint8_t sizeOfX){//表格初始�
   pTable->pyValues = (float *)malloc(sizeof(float) * pTable->sizeOfX);
 }
 
+void tableInitXY_withValues(linearInterpolation_t *pTable, uint8_t sizeOfX, float *pxValues, float *pyValues){//表格初始化为一维表，并将指定的值填充到表格中
+  //初始化表格
+  tableInitXY(pTable, sizeOfX);
+
+  //填充表格
+  for(int xIdx=0; xIdx<pTable->sizeOfX; xIdx++){
+    pTable->pxValues[xIdx] = pxValues[xIdx];
+    pTable->pyValues[xIdx] = pyValues[xIdx];
+  }
+}
+
 void tableInitXYZ(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOfY){//表格初始化为二维表，由(x,y)查z值
   if(NULL == pTable){return;}
   if(sizeOfX < 1){sizeOfX=1;}
@@ -23,6 +34,25 @@ void tableInitXYZ(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOf
   pTable->pyValues = (float *)malloc(sizeof(float) * pTable->sizeOfY);
   pTable->pzValuesOfY = (float **)malloc(sizeof(float) * pTable->sizeOfY);
   for(uint8_t i = 0;i < pTable->sizeOfY; i++){pTable->pzValuesOfY[i] = (float *)malloc(sizeof(float) * pTable->sizeOfX);}
+}
+
+//表格初始化为二维表，并将指定的值填充到表格中
+void tableInitXYZ_withValues(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOfY, float *pxValues, float *pyValues, float (*pzValuesByY)[sizeOfX]){
+  //初始化表格
+  tableInitXYZ(pTable, sizeOfX, sizeOfY);
+
+  //填充表格
+  for(int xIdx=0; xIdx<pTable->sizeOfX;xIdx++){
+    pTable->pxValues[xIdx] = pxValues[xIdx];  //填充 x
+  }
+
+  for(int yIdx=0;yIdx<pTable->sizeOfY;yIdx++){
+    pTable->pyValues[yIdx] = pyValues[yIdx];  //填充 y
+    
+    for(int xIdx=0;xIdx<pTable->sizeOfX;xIdx++){
+      pTable->pzValuesOfY[yIdx][xIdx] = pzValuesByY[yIdx][xIdx];  //填充 z
+    }
+  }
 }
 
 float getY(linearInterpolation_t *pTable, float x){//一维查表，由(x)坐标查y值

@@ -17,6 +17,8 @@ typedef struct linearInterpolation
 
 void tableInitXY(linearInterpolation_t *pTable, uint8_t sizeOfX);                           //初始化一维表结构
 void tableInitXYZ(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOfY);         //初始化二维表结构
+void tableInitXY_withValues(linearInterpolation_t *pTable, uint8_t sizeOfX, float *pxValues, float *pyValues);
+void tableInitXYZ_withValues(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOfY, float *pxValues, float *pyValues, float (*pzValuesByY)[sizeOfX]);
 float getY(linearInterpolation_t *pTable, float x);                                         //根据指定的 x 查 y，一维线性插值查表
 float getZ(linearInterpolation_t *pTable, float x, float y);                                //根据指定的 x，y 查 z，二维线性插值查表
 #endif
