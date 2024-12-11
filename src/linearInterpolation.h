@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef struct linearInterpolation
+typedef struct
 {
     uint8_t sizeOfX;
     uint8_t sizeOfY;
