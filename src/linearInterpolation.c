@@ -1,4 +1,6 @@
 #include "linearInterpolation.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 void tableInitXY(linearInterpolation_t *pTable, uint8_t sizeOfX){//表格初始化为一维表，由x查y值
   if(NULL == pTable){return;}

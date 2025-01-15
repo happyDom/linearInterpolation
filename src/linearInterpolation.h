@@ -1,8 +1,6 @@
 #ifndef e3273d88a856189f8cf94e4e3e8d69ee6
 #define e3273d88a856189f8cf94e4e3e8d69ee6
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
 
