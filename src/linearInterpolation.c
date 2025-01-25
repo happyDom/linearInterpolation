@@ -1,6 +1,6 @@
 #include "linearInterpolation.h"
 #include <stdio.h>
-#include <stdlib.h>
+// #include <stdlib.h>
 
 void tableInitXY(linearInterpolation_t *pTable, uint8_t sizeOfX){//表格初始化为一维表，由x查y值
   if(NULL == pTable){return;}
@@ -9,8 +9,8 @@ void tableInitXY(linearInterpolation_t *pTable, uint8_t sizeOfX){//表格初始�
   pTable->sizeOfX = sizeOfX;
   pTable->sizeOfY = sizeOfX;
 
-  pTable->pxValues = (float *)malloc(sizeof(float) * pTable->sizeOfX);
-  pTable->pyValues = (float *)malloc(sizeof(float) * pTable->sizeOfX);
+  // pTable->pxValues = (float *)malloc(sizeof(float) * pTable->sizeOfX);
+  // pTable->pyValues = (float *)malloc(sizeof(float) * pTable->sizeOfX);
 }
 
 void tableInitXY_withValues(linearInterpolation_t *pTable, uint8_t sizeOfX, float *pxValues, float *pyValues){//表格初始化为一维表，并将指定的值填充到表格中
@@ -32,10 +32,10 @@ void tableInitXYZ(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOf
   pTable->sizeOfX = sizeOfX;
   pTable->sizeOfY = sizeOfY;
 
-  pTable->pxValues = (float *)malloc(sizeof(float) * pTable->sizeOfX);
-  pTable->pyValues = (float *)malloc(sizeof(float) * pTable->sizeOfY);
-  pTable->pzValuesOfY = (float **)malloc(sizeof(float) * pTable->sizeOfY);
-  for(uint8_t i = 0;i < pTable->sizeOfY; i++){pTable->pzValuesOfY[i] = (float *)malloc(sizeof(float) * pTable->sizeOfX);}
+  // pTable->pxValues = (float *)malloc(sizeof(float) * pTable->sizeOfX);
+  // pTable->pyValues = (float *)malloc(sizeof(float) * pTable->sizeOfY);
+  // pTable->pzValuesOfY = (float **)malloc(sizeof(float) * pTable->sizeOfY);
+  // for(uint8_t i = 0;i < pTable->sizeOfY; i++){pTable->pzValuesOfY[i] = (float *)malloc(sizeof(float) * pTable->sizeOfX);}
 }
 
 //表格初始化为二维表，并将指定的值填充到表格中

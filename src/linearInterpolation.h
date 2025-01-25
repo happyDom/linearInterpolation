@@ -2,7 +2,6 @@
 #define e3273d88a856189f8cf94e4e3e8d69ee6
 
 #include <stdint.h>
-#include <stdbool.h>
 
 typedef struct
 {
