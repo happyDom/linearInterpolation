@@ -13,8 +13,8 @@ void tableInitXY_withValues(linearInterpolation_t *pTable, uint8_t sizeOfX, floa
   //初始化表格
   tableInitXY(pTable, sizeOfX);
 
-  pTable.pxValues = pxValues;
-  pTable.pyValues = pyValues;
+  pTable->pxValues = pxValues;
+  pTable->pyValues = pyValues;
 }
 
 void tableInitXYZ(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOfY){//表格初始化为二维表，由(x,y)查z值
@@ -33,7 +33,7 @@ void tableInitXYZ_withValues(linearInterpolation_t *pTable, uint8_t sizeOfX, uin
 
   pTable->pxValues = pxValues;
   pTable->pyValues = pyValues;
-  pTable->pzValuesOfY = pzValuesByY;
+  pTable->pzValuesOfY = (float *)pzValuesByY;
 }
 
 float getY(linearInterpolation_t *pTable, float x){//一维查表，由(x)坐标查y值
@@ -63,24 +63,24 @@ float getZ(linearInterpolation_t *pTable, float x, float y){//二维查表，由
   zTableY0.pxValues = pTable->pxValues;
 
   if(y <= pTable->pyValues[0]){
-    zTableY0.pyValues = pTable->pzValuesOfY[0];
+    zTableY0.pyValues = pTable->pzValuesOfY;
     return getY(&zTableY0, x);
   }
   if(y >= pTable->pyValues[pTable->sizeOfY-1]){
-    zTableY0.pyValues = pTable->pzValuesOfY[pTable->sizeOfY-1];
+    zTableY0.pyValues = pTable->pzValuesOfY + (pTable->sizeOfY - 1) * pTable->sizeOfX;
     return getY(&zTableY0, x);
   }
 
   //根据给定的y值，找到y所在位置的上界和下界
-  for(unsigned int i=0; i<pTable->sizeOfY-1; i++){
+  for(uint8_t i=0; i<pTable->sizeOfY-1; i++){
     if(y == pTable->pyValues[i+1]){
-      zTableY0.pyValues = pTable->pzValuesOfY[i+1];
+      zTableY0.pyValues = pTable->pzValuesOfY + (i + 1) * pTable->sizeOfX;
       return getY(&zTableY0, x);
     }
 
     if(y < pTable->pyValues[i+1]){
       if(y == pTable->pyValues[i]){
-        zTableY0.pyValues = pTable->pzValuesOfY[i];
+        zTableY0.pyValues = pTable->pzValuesOfY + i * pTable->sizeOfX;
         return getY(&zTableY0, x);
       }
 
@@ -90,8 +90,8 @@ float getZ(linearInterpolation_t *pTable, float x, float y){//二维查表，由
       zTableY1.sizeOfX = pTable->sizeOfX;
       zTableY1.pxValues = pTable->pxValues;
 
-      zTableY0.pyValues = pTable->pzValuesOfY[i];
-      zTableY1.pyValues = pTable->pzValuesOfY[i+1];
+      zTableY0.pyValues = pTable->pzValuesOfY + i * pTable->sizeOfX;
+      zTableY1.pyValues = pTable->pzValuesOfY + (i + 1) * pTable->sizeOfX;
       z0 = getY(&zTableY0, x);
       z1 = getY(&zTableY1, x);
 
