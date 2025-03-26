@@ -4,7 +4,7 @@
 static float _getY(linearInterpolation_t *pTable, float x);
 static float _getZ(linearInterpolation_t *pTable, float x, float y);
 
-void tableInitXY_withValues(linearInterpolation_t *pTable, uint8_t sizeOfX, float *pxValues, float *pyValues){//表格初始化为一维表，并将指定的值填充到表格中
+void tableInitXY(linearInterpolation_t *pTable, uint8_t sizeOfX, float *pxValues, float *pyValues){//表格初始化为一维表，并将指定的值填充到表格中
   //初始化表格
   if(NULL == pTable){return;}
   
@@ -19,7 +19,7 @@ void tableInitXY_withValues(linearInterpolation_t *pTable, uint8_t sizeOfX, floa
 }
 
 //表格初始化为二维表，并将指定的值填充到表格中
-void tableInitXYZ_withValues(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOfY, float *pxValues, float *pyValues, float (*pzValuesByY)[sizeOfX]){
+void tableInitXYZ(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOfY, float *pxValues, float *pyValues, float (*pzValuesByY)[sizeOfX]){
   //初始化表格
   if(NULL == pTable){return;}
 

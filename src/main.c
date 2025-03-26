@@ -22,7 +22,7 @@ int main(int argc, char const *argv[])
         //static的约束保障了这些变量的空间不会被收回
         static float xValues[] = {2, 4, 8};
         static float yValues[] = {10.0f, 15.0f, 20.0f};
-        tableInitXY_withValues(&demoTable, 3, xValues,yValues);
+        tableInitXY(&demoTable, 3, xValues,yValues);
         
         float userX=0;
         while (1)
@@ -52,7 +52,7 @@ int main(int argc, char const *argv[])
         static float zValues[][2] = {   {2,3},
                                         {3,4},
                                         {4,8}};
-        tableInitXYZ_withValues(&demoTable, 2, 3, xValues, yValues, zValues);
+        tableInitXYZ(&demoTable, 2, 3, xValues, yValues, zValues);
         
         float userX=0, userY=0;
         while (1)

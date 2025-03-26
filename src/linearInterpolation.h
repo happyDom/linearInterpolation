@@ -14,6 +14,6 @@ struct linearInterpolation_s
     float (* getZ)(linearInterpolation_t *pTable, float x, float y);
 };
 
-void tableInitXY_withValues(linearInterpolation_t *pTable, uint8_t sizeOfX, float *pxValues, float *pyValues);
-void tableInitXYZ_withValues(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOfY, float *pxValues, float *pyValues, float (*pzValuesByY)[sizeOfX]);
+void tableInitXY(linearInterpolation_t *pTable, uint8_t sizeOfX, float *pxValues, float *pyValues);
+void tableInitXYZ(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOfY, float *pxValues, float *pyValues, float (*pzValuesByY)[sizeOfX]);
 #endif
