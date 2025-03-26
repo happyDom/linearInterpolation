@@ -1,37 +1,114 @@
 # linearInterpolation
 
-#### 介绍
-基于C语言是一维/二维线性插值算法
+## 介绍
 
-#### 软件架构
-软件架构说明
+本 [linearInterpolation](git@gitee.com:DyyYq/linearInterpolation.git) 模块是基于C语言提供的一维/二维线性插值算法。表格值是为float类型，适合在单片机中使用。
 
+## 软件架构
 
-#### 安装教程
+序号 | 文档 | 说明
+-|:-|:-
+1|linearInterpolation.h|线性查表头文件
+2|linearInterpolation.c|线性查表实现
+3|main.c|演示程序
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## 引入模块
 
-#### 使用说明
+```bash
+git submodule add git@gitee.com:DyyYq/linearInterpolation.git submodules/linearInterpolation
+```
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## 引入头文件
 
-#### 参与贡献
+以下代码引入了<font color=Green>linearInterpolation.h</font>头文件，定定义了演示用的表变量 <font color=Green>demoTable</font>。 表 <font color=Green>demoTable</font>可以当一维表用，也可以当二维表用。
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+```C
+#include "linearInterpolation.h"
 
+linearInterpolation_t demoTable;
+```
 
-#### 特技
+## 填充表格内容（一维表）
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+以下代码对表<font color=Green>demoTable</font>进行了一维内容填充👇
+
+```C
+/*
+* Y
+* ↑
+* | 
+* 20-------------*
+* ｜
+* 15--------*
+* ｜
+* 10---* 
+* ｜
+* *----2----4----8-------------> X
+*/
+//static的约束保障了这些变量的空间不会被收回
+static float xValues[] = {2, 4, 8};
+static float yValues[] = {10.0f, 15.0f, 20.0f};
+tableInitXY_withValues(&demoTable, 3, xValues,yValues);
+```
+
+## 填充表格内容（二维表）
+
+以下代码对表<font color=Green>demoTable</font>进行了二维内容填充👇
+
+```C
+/*
+* *----1----2-----------------> X
+* |
+* 1    2    3
+* |
+* 2    3    4
+* |
+* 3    4    8
+* |
+* ↓
+* Y
+*/
+//static的约束保障了这些变量的空间不会被收回
+static float xValues[] = {1,2};
+static float yValues[] = {1,2,3};
+
+static float zValues[][2] = {   {2,3},
+                                {3,4},
+                                {4,8}};
+tableInitXYZ_withValues(&demoTable, 2, 3, xValues, yValues, zValues);
+```
+
+## 一维查表
+
+如果你对表格进行了一维填充，则可以对这个表格进行一维查表。如下是对表<font color=Green>demoTable</font>进行一维查表👇
+
+```C
+float userX=0;
+while (1)
+{
+    printf("please input X value:"); scanf("%f", &userX);
+    printf("the x is: %f, then the y should be: %f\n", userX, demoTable.getY(&demoTable, userX));
+}
+```
+
+方法 <font color=Green>getY</font> 可以根据指定的<font color=Green>x</font>值查表获取对应的 <font color=Green>y</font> 值。
+
+## 二维查表
+
+如果你对表格进行了二维填充，则可以对这个表格进行二维查表。如下是对表<font color=Green>demoTable</font>进行二维查表👇
+
+```C
+float userX=0, userY=0;
+while (1)
+{
+    printf("please input X value:"); scanf("%f", &userX);
+    printf("please input Y value:"); scanf("%f", &userY);
+    printf("the coord is: (%f, %f), then the z should be: %f\n", userX, userY, demoTable.getZ(&demoTable, userX, userY));
+}
+```
+
+方法 <font color=Green>getZ</font> 可以根据指定的 <font color=Green>x</font>、<font color=Green>y</font> 值，查表获取对应的 <font color=Green>z</font>值。
+
+## 小结
+
+以上就是本模块所提供的线性查表方法了。

@@ -1,10 +1,9 @@
 #include <stdio.h>
 #include "linearInterpolation.h"
 
-#define A 0
-
 linearInterpolation_t demoTable;
 
+#define A 0
 int main(int argc, char const *argv[])
 {
     if(A){
@@ -20,7 +19,7 @@ int main(int argc, char const *argv[])
         * ｜
         * *----2----4----8-------------> X
         */
-       //static的约束保障了这些变量的空间不会被收回
+        //static的约束保障了这些变量的空间不会被收回
         static float xValues[] = {2, 4, 8};
         static float yValues[] = {10.0f, 15.0f, 20.0f};
         tableInitXY_withValues(&demoTable, 3, xValues,yValues);
@@ -46,7 +45,7 @@ int main(int argc, char const *argv[])
         * ↓
         * Y
         */
-       //static的约束保障了这些变量的空间不会被收回
+        //static的约束保障了这些变量的空间不会被收回
         static float xValues[] = {1,2};
         static float yValues[] = {1,2,3};
 
