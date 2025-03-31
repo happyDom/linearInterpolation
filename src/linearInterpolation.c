@@ -16,6 +16,7 @@ void tableInitXY(linearInterpolation_t *pTable, uint8_t sizeOfX, float *pxValues
   pTable->pyValues = pyValues;
 
   pTable->getY = _getY;
+  pTable->getZ = NULL;
 }
 
 //表格初始化为二维表，并将指定的值填充到表格中
@@ -32,6 +33,7 @@ void tableInitXYZ(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOf
   pTable->pyValues = pyValues;
   pTable->pzValuesOfY = (float *)pzValuesByY;
 
+  pTable->getY = _getY;
   pTable->getZ = _getZ;
 }
 
