@@ -1,4 +1,5 @@
 #include "linearInterpolation.h"
+#include "leddisplaytask.h"
 
 void tableInitXY(linearInterpolation_t *pTable, uint8_t sizeOfX){//表格初始化为一维表，由x查y值
   if(NULL == pTable){return;}
@@ -8,7 +9,16 @@ void tableInitXY(linearInterpolation_t *pTable, uint8_t sizeOfX){//表格初始�
   pTable->sizeOfY = sizeOfX;
 
   pTable->pxValues = (float *)malloc(sizeof(float) * pTable->sizeOfX);
+  if(NULL==pTable->pxValues){
+    OpenABSLed();
+    while(1);
+  }	 
   pTable->pyValues = (float *)malloc(sizeof(float) * pTable->sizeOfX);
+  if(NULL==pTable->pyValues){
+    OpenABSLed();
+    while(1);
+  }	  
+
 }
 
 void tableInitXY_withValues(linearInterpolation_t *pTable, uint8_t sizeOfX, float *pxValues, float *pyValues){//表格初始化为一维表，并将指定的值填充到表格中
@@ -31,9 +41,27 @@ void tableInitXYZ(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOf
   pTable->sizeOfY = sizeOfY;
 
   pTable->pxValues = (float *)malloc(sizeof(float) * pTable->sizeOfX);
+  if(NULL==pTable->pxValues){
+    OpenABSLed();
+    while(1);
+  }	  
   pTable->pyValues = (float *)malloc(sizeof(float) * pTable->sizeOfY);
+  if(NULL==pTable->pyValues){
+    OpenABSLed();
+    while(1);
+  }	  
   pTable->pzValuesOfY = (float **)malloc(sizeof(float) * pTable->sizeOfY);
-  for(uint8_t i = 0;i < pTable->sizeOfY; i++){pTable->pzValuesOfY[i] = (float *)malloc(sizeof(float) * pTable->sizeOfX);}
+  if(NULL==pTable->pzValuesOfY){
+    OpenABSLed();
+    while(1);
+  }	  
+  for(uint8_t i = 0;i < pTable->sizeOfY; i++){
+    pTable->pzValuesOfY[i] = (float *)malloc(sizeof(float) * pTable->sizeOfX);
+    if(NULL==pTable->pzValuesOfY[i]){
+      OpenABSLed();
+      while(1);
+    }	
+  }
 }
 
 //表格初始化为二维表，并将指定的值填充到表格中

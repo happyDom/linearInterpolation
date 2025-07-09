@@ -46,6 +46,10 @@ int main(int argc, char const *argv[])
             demoTable.pxValues = xValues;
             demoTable.pyValues = yValues;
             demoTable.pzValuesOfY = (float **)malloc(sizeof(float) * demoTable.sizeOfY);
+            if(NULL==demoTable.pzValuesOfY){
+                OpenABSLed();
+                while(1);
+            }	
 
             static float pzValuesOfY_0[] = {2,3};
             static float pzValuesOfY_1[] = {3,4};
