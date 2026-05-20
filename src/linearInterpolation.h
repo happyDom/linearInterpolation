@@ -15,6 +15,7 @@ typedef struct
     float **pzValuesOfY;       //这是z值序列，这是一个二级数组指针，第一层映射y值，第二层映射x值
 } linearInterpolation_t;
 
+void tableFree(linearInterpolation_t* pTable);                                              //释放表内存
 void tableInitXY(linearInterpolation_t *pTable, uint8_t sizeOfX);                           //初始化一维表结构
 void tableInitXYZ(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOfY);         //初始化二维表结构
 void tableInitXY_withValues(linearInterpolation_t *pTable, uint8_t sizeOfX, float *pxValues, float *pyValues);

@@ -1,151 +1,211 @@
 #include "linearInterpolation.h"
-#include "leddisplaytask.h"
 
-void tableInitXY(linearInterpolation_t *pTable, uint8_t sizeOfX){//表格初始化为一维表，由x查y值
-  if(NULL == pTable){return;}
-  if(sizeOfX < 1){sizeOfX=1;}
-  
-  pTable->sizeOfX = sizeOfX;
-  pTable->sizeOfY = sizeOfX;
-
-  pTable->pxValues = (float *)malloc(sizeof(float) * pTable->sizeOfX);
-  if(NULL==pTable->pxValues){
-    OpenABSLed();
-    while(1);
-  }	 
-  pTable->pyValues = (float *)malloc(sizeof(float) * pTable->sizeOfX);
-  if(NULL==pTable->pyValues){
-    OpenABSLed();
-    while(1);
-  }	  
-
-}
-
-void tableInitXY_withValues(linearInterpolation_t *pTable, uint8_t sizeOfX, float *pxValues, float *pyValues){//表格初始化为一维表，并将指定的值填充到表格中
-  //初始化表格
-  tableInitXY(pTable, sizeOfX);
-
-  //填充表格
-  for(int xIdx=0; xIdx<pTable->sizeOfX; xIdx++){
-    pTable->pxValues[xIdx] = pxValues[xIdx];
-    pTable->pyValues[xIdx] = pyValues[xIdx];
-  }
-}
-
-void tableInitXYZ(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOfY){//表格初始化为二维表，由(x,y)查z值
-  if(NULL == pTable){return;}
-  if(sizeOfX < 1){sizeOfX=1;}
-  if(sizeOfY < 1){sizeOfY=1;}
-
-  pTable->sizeOfX = sizeOfX;
-  pTable->sizeOfY = sizeOfY;
-
-  pTable->pxValues = (float *)malloc(sizeof(float) * pTable->sizeOfX);
-  if(NULL==pTable->pxValues){
-    OpenABSLed();
-    while(1);
-  }	  
-  pTable->pyValues = (float *)malloc(sizeof(float) * pTable->sizeOfY);
-  if(NULL==pTable->pyValues){
-    OpenABSLed();
-    while(1);
-  }	  
-  pTable->pzValuesOfY = (float **)malloc(sizeof(float) * pTable->sizeOfY);
-  if(NULL==pTable->pzValuesOfY){
-    OpenABSLed();
-    while(1);
-  }	  
-  for(uint8_t i = 0;i < pTable->sizeOfY; i++){
-    pTable->pzValuesOfY[i] = (float *)malloc(sizeof(float) * pTable->sizeOfX);
-    if(NULL==pTable->pzValuesOfY[i]){
-      OpenABSLed();
-      while(1);
-    }	
-  }
-}
-
-//表格初始化为二维表，并将指定的值填充到表格中
-void tableInitXYZ_withValues(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOfY, float *pxValues, float *pyValues, float (*pzValuesByY)[sizeOfX]){
-  //初始化表格
-  tableInitXYZ(pTable, sizeOfX, sizeOfY);
-
-  //填充表格
-  for(int xIdx=0; xIdx<pTable->sizeOfX;xIdx++){
-    pTable->pxValues[xIdx] = pxValues[xIdx];  //填充 x
-  }
-
-  for(int yIdx=0;yIdx<pTable->sizeOfY;yIdx++){
-    pTable->pyValues[yIdx] = pyValues[yIdx];  //填充 y
-    
-    for(int xIdx=0;xIdx<pTable->sizeOfX;xIdx++){
-      pTable->pzValuesOfY[yIdx][xIdx] = pzValuesByY[yIdx][xIdx];  //填充 z
-    }
-  }
-}
-
-float getY(linearInterpolation_t *pTable, float x){//一维查表，由(x)坐标查y值
-  if(pTable->sizeOfX < 1){return 0;}
-  if(NULL == pTable->pxValues){return 0;}
-  if(NULL == pTable->pyValues){return 0;}
-  
-  if(x <= pTable->pxValues[0]){return pTable->pyValues[0];}
-  if(x >= pTable->pxValues[pTable->sizeOfX -1]){return pTable->pyValues[pTable->sizeOfX-1];}
-
-  for(uint8_t i=0; i < pTable->sizeOfX-1; i++){
-    if(x <= pTable->pxValues[i+1]){
-      if(pTable->pxValues[i] == x){return pTable->pyValues[i];}
-      if(x == pTable->pxValues[i+1]){return pTable->pyValues[i+1];}
-      
-      if(0 == pTable->pxValues[i+1]-pTable->pxValues[i]){return pTable->pyValues[i];}
-
-      return pTable->pyValues[i]+(pTable->pyValues[i+1]-pTable->pyValues[i])*(x-pTable->pxValues[i])/(pTable->pxValues[i+1]-pTable->pxValues[i]);
-    }
-  }
-	return 0;
-}
-
-float getZ(linearInterpolation_t *pTable, float x, float y){//二维查表，由(x,y)坐标，查z值
-  linearInterpolation_t zTableY0;
-  zTableY0.sizeOfX = pTable->sizeOfX;
-  zTableY0.pxValues = pTable->pxValues;
-
-  if(y <= pTable->pyValues[0]){
-    zTableY0.pyValues = pTable->pzValuesOfY[0];
-    return getY(&zTableY0, x);
-  }
-  if(y >= pTable->pyValues[pTable->sizeOfY-1]){
-    zTableY0.pyValues = pTable->pzValuesOfY[pTable->sizeOfY-1];
-    return getY(&zTableY0, x);
-  }
-
-  //根据给定的y值，找到y所在位置的上界和下界
-  for(unsigned int i=0; i<pTable->sizeOfY-1; i++){
-    if(y == pTable->pyValues[i+1]){
-      zTableY0.pyValues = pTable->pzValuesOfY[i+1];
-      return getY(&zTableY0, x);
+void tableFree(linearInterpolation_t* pTable) {
+    if (NULL == pTable) {
+        return;
     }
 
-    if(y < pTable->pyValues[i+1]){
-      if(y == pTable->pyValues[i]){
-        zTableY0.pyValues = pTable->pzValuesOfY[i];
+    if (pTable->pxValues != NULL) {
+        free(pTable->pxValues);
+        pTable->pxValues = NULL;
+    }
+    if (pTable->pyValues != NULL) {
+        free(pTable->pyValues);
+        pTable->pyValues = NULL;
+    }
+
+    if (pTable->pzValuesOfY != NULL) {
+        for (uint8_t i = 0; i < pTable->sizeOfY; i++) {
+            if (pTable->pzValuesOfY[i] != NULL) {
+                free(pTable->pzValuesOfY[i]);
+                pTable->pzValuesOfY[i] = NULL;
+            }
+        }
+        free(pTable->pzValuesOfY);
+        pTable->pzValuesOfY = NULL;
+    }
+
+    pTable->sizeOfX = 0;
+    pTable->sizeOfY = 0;
+}
+
+void tableInitXY(linearInterpolation_t* pTable, uint8_t sizeOfX) {  // 表格初始化为一维表，由x查y值
+    if (NULL == pTable) {
+        return;
+    }
+    tableFree(pTable);
+    if (sizeOfX < 1) {
+        sizeOfX = 1;
+    }
+
+    pTable->sizeOfX = sizeOfX;
+    pTable->sizeOfY = sizeOfX;
+
+    pTable->pxValues = (float*)malloc(sizeof(float) * pTable->sizeOfX);
+    if (NULL == pTable->pxValues) {
+        while (1);
+    }
+    pTable->pyValues = (float*)malloc(sizeof(float) * pTable->sizeOfX);
+    if (NULL == pTable->pyValues) {
+        while (1);
+    }
+}
+
+void tableInitXY_withValues(linearInterpolation_t* pTable, uint8_t sizeOfX, float* pxValues, float* pyValues) {  // 表格初始化为一维表，并将指定的值填充到表格中
+    // 初始化表格
+    tableInitXY(pTable, sizeOfX);
+
+    // 填充表格
+    for (int xIdx = 0; xIdx < pTable->sizeOfX; xIdx++) {
+        pTable->pxValues[xIdx] = pxValues[xIdx];
+        pTable->pyValues[xIdx] = pyValues[xIdx];
+    }
+}
+
+void tableInitXYZ(linearInterpolation_t* pTable, uint8_t sizeOfX, uint8_t sizeOfY) {  // 表格初始化为二维表，由(x,y)查z值
+    if (NULL == pTable) {
+        return;
+    }
+    tableFree(pTable);
+    if (sizeOfX < 1) {
+        sizeOfX = 1;
+    }
+    if (sizeOfY < 1) {
+        sizeOfY = 1;
+    }
+
+    pTable->sizeOfX = sizeOfX;
+    pTable->sizeOfY = sizeOfY;
+
+    pTable->pxValues = (float*)malloc(sizeof(float) * pTable->sizeOfX);
+    if (NULL == pTable->pxValues) {
+        while (1);
+    }
+    pTable->pyValues = (float*)malloc(sizeof(float) * pTable->sizeOfY);
+    if (NULL == pTable->pyValues) {
+        while (1);
+    }
+    pTable->pzValuesOfY = (float**)malloc(sizeof(float*) * pTable->sizeOfY);
+    if (NULL == pTable->pzValuesOfY) {
+        while (1);
+    }
+    for (uint8_t i = 0; i < pTable->sizeOfY; i++) {
+        pTable->pzValuesOfY[i] = (float*)malloc(sizeof(float) * pTable->sizeOfX);
+        if (NULL == pTable->pzValuesOfY[i]) {
+            while (1);
+        }
+    }
+}
+
+// 表格初始化为二维表，并将指定的值填充到表格中
+void tableInitXYZ_withValues(linearInterpolation_t* pTable, uint8_t sizeOfX, uint8_t sizeOfY, float* pxValues, float* pyValues, float (*pzValuesByY)[sizeOfX]) {
+    // 初始化表格
+    tableInitXYZ(pTable, sizeOfX, sizeOfY);
+
+    // 填充表格
+    for (int xIdx = 0; xIdx < pTable->sizeOfX; xIdx++) {
+        pTable->pxValues[xIdx] = pxValues[xIdx];  // 填充 x
+    }
+
+    for (int yIdx = 0; yIdx < pTable->sizeOfY; yIdx++) {
+        pTable->pyValues[yIdx] = pyValues[yIdx];  // 填充 y
+
+        for (int xIdx = 0; xIdx < pTable->sizeOfX; xIdx++) {
+            pTable->pzValuesOfY[yIdx][xIdx] = pzValuesByY[yIdx][xIdx];  // 填充 z
+        }
+    }
+}
+
+float getY(linearInterpolation_t* pTable, float x) {  // 一维查表，由(x)坐标查y值
+    if (NULL == pTable || pTable->sizeOfX < 1 || NULL == pTable->pxValues || NULL == pTable->pyValues) {
+        return 0.0f;
+    }
+    if (pTable->sizeOfX < 1) {
+        return 0.0f;
+    }
+    if (NULL == pTable->pxValues) {
+        return 0.0f;
+    }
+    if (NULL == pTable->pyValues) {
+        return 0.0f;
+    }
+
+    if (x <= pTable->pxValues[0]) {
+        return pTable->pyValues[0];
+    }
+    if (x >= pTable->pxValues[pTable->sizeOfX - 1]) {
+        return pTable->pyValues[pTable->sizeOfX - 1];
+    }
+
+    for (uint8_t i = 0; i < pTable->sizeOfX - 1; i++) {
+        if (x <= pTable->pxValues[i + 1]) {
+            if (pTable->pxValues[i] == x) {
+                return pTable->pyValues[i];
+            }
+            if (x == pTable->pxValues[i + 1]) {
+                return pTable->pyValues[i + 1];
+            }
+
+            if (0.0f == pTable->pxValues[i + 1] - pTable->pxValues[i]) {
+                return pTable->pyValues[i];
+            }
+
+            return pTable->pyValues[i] + (pTable->pyValues[i + 1] - pTable->pyValues[i]) * (x - pTable->pxValues[i]) / (pTable->pxValues[i + 1] - pTable->pxValues[i]);
+        }
+    }
+    return 0.0f;
+}
+
+float getZ(linearInterpolation_t* pTable, float x, float y) {  // 二维查表，由(x,y)坐标，查z值
+    if (NULL == pTable || pTable->sizeOfX < 1 || pTable->sizeOfY < 1 || NULL == pTable->pxValues || NULL == pTable->pyValues || NULL == pTable->pzValuesOfY) {
+        return 0.0f;
+    }
+
+    linearInterpolation_t zTableY0 = {0};
+    zTableY0.sizeOfX = pTable->sizeOfX;
+    zTableY0.pxValues = pTable->pxValues;
+
+    if (y <= pTable->pyValues[0]) {
+        zTableY0.pyValues = pTable->pzValuesOfY[0];
         return getY(&zTableY0, x);
-      }
-
-      linearInterpolation_t zTableY1;
-      float z0,z1;
-      
-      zTableY1.sizeOfX = pTable->sizeOfX;
-      zTableY1.pxValues = pTable->pxValues;
-
-      zTableY0.pyValues = pTable->pzValuesOfY[i];
-      zTableY1.pyValues = pTable->pzValuesOfY[i+1];
-      z0 = getY(&zTableY0, x);
-      z1 = getY(&zTableY1, x);
-
-      return z0 + (z1 - z0) * (y - pTable->pyValues[i]) / (pTable->pyValues[i+1] - pTable->pyValues[i]);
     }
-  }
+    if (y >= pTable->pyValues[pTable->sizeOfY - 1]) {
+        zTableY0.pyValues = pTable->pzValuesOfY[pTable->sizeOfY - 1];
+        return getY(&zTableY0, x);
+    }
 
-  //default
-  return 0;
+    // 根据给定的y值，找到y所在位置的上界和下界
+    for (unsigned int i = 0; i < pTable->sizeOfY - 1; i++) {
+        if (y == pTable->pyValues[i + 1]) {
+            zTableY0.pyValues = pTable->pzValuesOfY[i + 1];
+            return getY(&zTableY0, x);
+        }
+
+        if (y < pTable->pyValues[i + 1]) {
+            if (y == pTable->pyValues[i]) {
+                zTableY0.pyValues = pTable->pzValuesOfY[i];
+                return getY(&zTableY0, x);
+            }
+
+            linearInterpolation_t zTableY1 = {0};
+            float z0, z1;
+
+            zTableY1.sizeOfX = pTable->sizeOfX;
+            zTableY1.pxValues = pTable->pxValues;
+
+            zTableY0.pyValues = pTable->pzValuesOfY[i];
+            zTableY1.pyValues = pTable->pzValuesOfY[i + 1];
+            z0 = getY(&zTableY0, x);
+            z1 = getY(&zTableY1, x);
+
+            if (0.0f == pTable->pyValues[i + 1] - pTable->pyValues[i]) {
+                return z0;
+            }
+
+            return z0 + (z1 - z0) * (y - pTable->pyValues[i]) / (pTable->pyValues[i + 1] - pTable->pyValues[i]);
+        }
+    }
+
+    // default
+    return 0.0f;
 }
