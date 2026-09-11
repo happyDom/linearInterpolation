@@ -28,7 +28,7 @@ int main(int argc, char const *argv[])
         while (1)
         {
             printf("please input X value:"); scanf("%f", &userX);
-            printf("the x is: %f, then the y should be: %f\n", userX, demoTable.getY(&demoTable, userX));
+            printf("the x is: %f, then the y should be: %f\n", userX, getY(&demoTable, userX));
         }
     }
 
@@ -59,7 +59,7 @@ int main(int argc, char const *argv[])
         {
             printf("please input X value:"); scanf("%f", &userX);
             printf("please input Y value:"); scanf("%f", &userY);
-            printf("the coord is: (%f, %f), then the z should be: %f\n", userX, userY, demoTable.getZ(&demoTable, userX, userY));
+            printf("the coord is: (%f, %f), then the z should be: %f\n", userX, userY, getZ(&demoTable, userX, userY));
         }
     }
     

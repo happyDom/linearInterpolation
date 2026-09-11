@@ -1,4 +1,4 @@
-#include "linearInterpolation_merged.h"
+#include "linearInterpolation.h"
 
 /* =====================================================================
  * x 方向一维插值核心：给定一行 y 数据（pyValues），由 x 查插值结果
@@ -45,7 +45,7 @@ void tableInitXY(linearInterpolation_t *pTable, uint8_t sizeOfX, const float *px
 /* =====================================================================
  * 二维表初始化（z 按行优先扁平存储）
  * ===================================================================== */
-void tableInitXYZ(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOfY, const float *pxValues, const float *pyValues, const float (*pzValuesByY)[sizeOfX]){
+void tableInitXYZ(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOfY, const float *pxValues, const float *pyValues, const float *pzValuesByY){
     if (NULL == pTable) { return; }
 
     if (sizeOfX < 1) { sizeOfX = 1; }
@@ -55,7 +55,7 @@ void tableInitXYZ(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOf
     pTable->sizeOfY      = sizeOfY;
     pTable->pxValues     = pxValues;
     pTable->pyValues     = pyValues;
-    pTable->pzValuesOfY  = (const float *)pzValuesByY;
+    pTable->pzValuesOfY  = pzValuesByY;
 }
 
 /* =====================================================================

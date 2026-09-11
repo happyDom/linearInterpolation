@@ -1,5 +1,5 @@
-#ifndef LINEARINTERPOLATION_MERGED_H
-#define LINEARINTERPOLATION_MERGED_H
+#ifndef LINEARINTERPOLATION_H
+#define LINEARINTERPOLATION_H
 
 #include <stdint.h>
 
@@ -27,7 +27,7 @@ typedef struct{
 void  tableInitXY(linearInterpolation_t *pTable, uint8_t sizeOfX, const float *pxValues, const float *pyValues);
 
 /* 二维表初始化：绑定外部 x/y/z 数组，z 按行优先传入（不拥有内存） */
-void  tableInitXYZ(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOfY, const float *pxValues, const float *pyValues, const float (*pzValuesByY)[sizeOfX]);
+void  tableInitXYZ(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOfY, const float *pxValues, const float *pyValues, const float *pzValuesByY);
 
 /* 一维查表：由 x 线性插值查 y */
 float getY(const linearInterpolation_t *pTable, float x);
@@ -35,4 +35,4 @@ float getY(const linearInterpolation_t *pTable, float x);
 /* 二维查表：由 (x, y) 双线性插值查 z */
 float getZ(const linearInterpolation_t *pTable, float x, float y);
 
-#endif /* LINEARINTERPOLATION_MERGED_H */
+#endif /* LINEARINTERPOLATION_H */
