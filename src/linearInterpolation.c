@@ -31,7 +31,7 @@ static float _interpolateX(const linearInterpolation_t *pTable, const float *pyV
  * 一维表初始化
  * ===================================================================== */
 void tableInitXY(linearInterpolation_t *pTable, uint8_t sizeOfX, const float *pxValues, const float *pyValues){
-    if (NULL == pTable) {
+    if (0 == pTable) {
         return;
     }
     if (sizeOfX < 1) {
@@ -41,14 +41,14 @@ void tableInitXY(linearInterpolation_t *pTable, uint8_t sizeOfX, const float *px
     pTable->sizeOfY      = sizeOfX;
     pTable->pxValues     = pxValues;
     pTable->pyValues     = pyValues;
-    pTable->pzValuesOfY  = NULL;
+    pTable->pzValuesOfY  = 0;
 }
 
 /* =====================================================================
  * 二维表初始化（z 按行优先扁平存储）
  * ===================================================================== */
 void tableInitXYZ(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOfY, const float *pxValues, const float *pyValues, const float *pzValuesByY){
-    if (NULL == pTable) { return; }
+    if (0 == pTable) { return; }
 
     if (sizeOfX < 1) { sizeOfX = 1; }
     if (sizeOfY < 1) { sizeOfY = 1; }
@@ -65,8 +65,8 @@ void tableInitXYZ(linearInterpolation_t *pTable, uint8_t sizeOfX, uint8_t sizeOf
  * ===================================================================== */
 float getY(const linearInterpolation_t *pTable, float x)
 {
-    if (NULL == pTable || pTable->sizeOfX < 1) { return 0.0f; }
-    if (NULL == pTable->pxValues || NULL == pTable->pyValues) { return 0.0f; }
+    if (0 == pTable || pTable->sizeOfX < 1) { return 0.0f; }
+    if (0 == pTable->pxValues || 0 == pTable->pyValues) { return 0.0f; }
 
     return _interpolateX(pTable, pTable->pyValues, x);
 }
@@ -79,8 +79,8 @@ float getZ(const linearInterpolation_t *pTable, float x, float y){
     uint8_t i;
     float z0, z1;
 
-    if (NULL == pTable || pTable->sizeOfX < 1 || pTable->sizeOfY < 1) { return 0.0f; }
-    if (NULL == pTable->pxValues || NULL == pTable->pyValues || NULL == pTable->pzValuesOfY) { return 0.0f; }
+    if (0 == pTable || pTable->sizeOfX < 1 || pTable->sizeOfY < 1) { return 0.0f; }
+    if (0 == pTable->pxValues || 0 == pTable->pyValues || 0 == pTable->pzValuesOfY) { return 0.0f; }
 
     /* y 低于/高于表范围：钳制到首/末行 */
     if (y <= pTable->pyValues[0]) { return _interpolateX(pTable, pTable->pzValuesOfY, x); }
